@@ -6,7 +6,7 @@ V1
 Open CAN_Visualiser Folder in a Code Editor (Eg. VS Code)
 Open Terminal with current folder and run the following commands.
 
-'''bat
+```bat
 Set-ExecutionPolicy Unrestricted -Scope Process
 # Create Virtual Python Environment
 python -m venv .venv
@@ -20,7 +20,7 @@ pip install -r .\requirements.txt
 mkdir log
 # Run Python GUI
 python master.py
-'''
+```
 
 ## Instruction Guide
 
