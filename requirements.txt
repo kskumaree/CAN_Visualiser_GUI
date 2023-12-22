@@ -1,0 +1,6 @@
+python-can
+cantools
+matplotlib
+pyqt5
+pyserial
+tk
