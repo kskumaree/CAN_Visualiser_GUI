@@ -52,7 +52,7 @@ class SerialCtrl():
         '''
         ports = serial.tools.list_ports.comports()
         self.com_list = [com[0] for com in ports]
-        self.com_list.insert(0, "-")
+        self.com_list.insert(0, "--")
 
     def SerialOpen(self, ComGUI):
         '''
