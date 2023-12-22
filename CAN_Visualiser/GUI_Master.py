@@ -130,7 +130,7 @@ class ComGui():
         '''
         print("Connect ctrl")
         # Checking the logic consistency to keep the connection btn
-        if "-" in self.clicked_bd.get() or "-" in self.clicked_com.get():
+        if "--" in self.clicked_bd.get() or "--" in self.clicked_com.get():
             self.btn_connect["state"] = "disabled"
         else:
             self.btn_connect["state"] = "active"
