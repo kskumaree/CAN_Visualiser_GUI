@@ -1,10 +1,9 @@
 # Can Visualiser
-V2
-Modern UI Theme with Dark Mode
+V1
 
 ## Installation Guide
 
-Open CAN_Visualiser_V2 Folder in a Code Editor (Eg. VS Code)
+Open CAN_Visualiser Folder in a Code Editor (Eg. VS Code)
 Open Terminal with current folder and run the following commands.
 
 '''bat

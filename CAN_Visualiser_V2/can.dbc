@@ -1,0 +1,34 @@
+VERSION ""
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    VAL_
+    CAT_DEF_
+    CAT_
+    FILTER
+    BA_DEF_DEF_
+    EV_DATA_
+    ENVVAR_DATA_
+    SGTYPE_
+    SGTYPE_VAL_
+    BA_DEF_DEF_
+    BA_DEF_DEF_
+    BA_DEF_DEF_
+    BA_DEF_DEF_
+
+BS_:
+
+BU_:
+
+BO_ 1 Voltage: 3 ESP32
+    SG_ VPhase1 : 0|8@1+ (1,0) [0|0] ""  VECTOR__INTEL
+    SG_ VPhase2 : 8|8@1+ (1,0) [0|0] ""  VECTOR__INTEL
+    SG_ VPhase3 : 16|8@1+ (1,0) [0|0] ""  VECTOR__INTEL
+
+BO_ 2 Current: 3 ESP32
+    SG_ CPhase1 : 0|8@1+ (1,0) [0|0] ""  VECTOR__INTEL
+    SG_ CPhase2 : 8|8@1+ (1,0) [0|0] ""  VECTOR__INTEL
+    SG_ CPhase3 : 16|8@1+ (1,0) [0|0] ""  VECTOR__INTEL

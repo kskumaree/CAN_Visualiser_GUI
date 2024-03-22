@@ -63,11 +63,8 @@ class Bus():
 
     async def listen(self, callback):
         reader = can.AsyncBufferedReader()
-
-        try:
-            logger = can.Logger(f"log/{ datetime.now().isoformat(timespec='seconds') }.log")
-        except:
-            logger = can.Logger("log/{}.log".format(datetime.now().strftime('%Y_%m_%d-%I_%M_%S_%p')))
+        # logger = can.Logger(f"log/{ datetime.now().strftime( "%Y_%m_%d-%I_%M_%S_%p" ) }.log")
+        logger = can.Logger(f"log/{ datetime.now().isoformat(timespec='seconds') }.log")
 
         # Set up listeners and add callback functions
         listeners = [

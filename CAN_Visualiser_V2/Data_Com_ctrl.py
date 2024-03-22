@@ -14,6 +14,7 @@ class DataMaster():
 
         self.XData = []
         self.YData = []
+        self.XData_with_Timestamp = []
         self.RefTime = 0
 
         self.FunctionMaster = {
@@ -21,7 +22,7 @@ class DataMaster():
             "VoltageDisplay": self.VoltData
         }
 
-        self.DisplayTimeRange = 5
+        self.DisplayTimeRange = 0.001
 
         self.Channels = []
         self.ChannelNumList = [0,1,2,3,4,5,6,7]
@@ -78,11 +79,17 @@ class DataMaster():
         self.YData = []
         for _ in range(self.SynchChannel):
             self.YData.append([])
+    
+    def buildXdata_with_Timestamp(self):
+        self.XData_with_Timestamp = []
+        for _ in range(self.SynchChannel):
+            self.XData_with_Timestamp.append([])
 
     def ClearData(self):
         self.RowMsg = ""
         self.msg = []
         self.YData = []
+        self.XData_with_Timestamp = []
 
     def IntMsgFunc(self):
         self.IntMsg = [int(msg) for msg in self.msg]
@@ -105,6 +112,9 @@ class DataMaster():
             self.XData.append(0)
         else:
             self.XData.append(time.perf_counter()-self.RefTime)
+
+    def UpdataXdata_with_Timestamp(self,ChNumber,Data):
+        self.XData_with_Timestamp[ChNumber].append(Data)
 
     def UpdataYdata(self,ChNumber,Data):
         self.YData[ChNumber].append(Data)

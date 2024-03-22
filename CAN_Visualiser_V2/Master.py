@@ -1,4 +1,3 @@
-
 from GUI_Master import RootGUI, ComGui
 from Serial_Com_ctrl import SerialCtrl
 from Data_Com_ctrl import DataMaster
