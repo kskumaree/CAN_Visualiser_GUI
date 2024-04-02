@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 
-# matplotlib.use('Qt5Agg')
+matplotlib.use("QtAgg")
 import matplotlib.style as mplstyle
 import matplotlib.animation as animation
 
@@ -64,7 +64,7 @@ class RootGUI:
 class ComGui:
     def __init__(self, root, serial, data):
         """
-        Initialize the connexion GUI and initialize the main widgets
+        Initialize the connetion GUI and initialize the main widgets
         """
         # Initializing the Widgets
         self.root = root
@@ -381,48 +381,6 @@ class ConnGUI:
         )
         self.serial.t1.start()
 
-    # def UpdateChart(self):
-    #     try:
-    #         print("Updating Chart")
-    #         mydisplayChannels = []
-    #         for MyChannelOpt in range(len(self.chartMaster.ViewVar)):
-    #             self.chartMaster.figs[MyChannelOpt][1].clear()
-    #             print(enumerate(self.chartMaster.ViewVar[MyChannelOpt]))
-    #             for cnt, state in enumerate(self.chartMaster.ViewVar[MyChannelOpt]):
-    #                 # print ("State is")
-    #                 # print(state)
-    #                 # print(state.get())
-    #                 print("count")
-    #                 print(cnt)
-    #                 print("option list")
-    #                 print(self.chartMaster.OptionVar[MyChannelOpt])
-    #                 if state.get():
-    #                     MyChannel = self.chartMaster.OptionVar[MyChannelOpt][cnt].get(
-    #                     )
-    #                     mydisplayChannels.append(MyChannel)
-    #                     # print(MyChannel)
-    #                     ChannelIndex = self.data.ChannelNum[MyChannel]
-    #                     # print("inside state.get")
-    #                     # print(ChannelIndex)
-    #                     FuncName = self.chartMaster.FunVar[MyChannelOpt][cnt].get(
-    #                     )
-    #                     self.chartMaster.ViewVar[MyChannelOpt]
-
-    #                     self.chart = self.chartMaster.figs[MyChannelOpt][1]
-    #                     self.color = self.data.ChannelColor[MyChannel]
-    #                     self.y = self.data.YDisplay[ChannelIndex]
-    #                     self.x = self.data.XDisplay
-    #                     # self.data.FunctionMaster[FuncName](self)
-    #                     # print(self.y)
-    #             self.chartMaster.figs[MyChannelOpt][1].grid(
-    #                 color='b', linestyle='-', linewidth=0.2)
-    #             # self.chartMaster.figs[MyChannelOpt][0].canvas.draw()
-    #         print(mydisplayChannels)
-    #     except Exception as e:
-    #         print(e)
-    #     if self.serial.threading:
-    #         self.root.after(200, self.UpdateChart)
-
     def UpdateChart(self):
         try:
             # mydisplayChannels = []
@@ -471,6 +429,7 @@ class ConnGUI:
 
         self.btn_stop_stream.configure(state="disabled")
         self.btn_start_stream.configure(state="normal")
+        
         self.serial.threading = False
         # self.serial.SerialStop(self)
 
@@ -504,11 +463,12 @@ class ConnGUI:
             idx = 0
             # Create figure for plotting
             sig_num = len(self.serial.Can_API.get_messages(msg_id).data)
-            
-            
-            ax1 = plt.subplot(1,1,1)
-            ax2 = plt.subplot(1,1,1)
-            ax3 = plt.subplot(1,1,1)
+
+            ax1 = plt.subplot(1, 1, 1)
+            ax2 = plt.subplot(1, 1, 1)
+            ax3 = plt.subplot(1, 1, 1)
+
+            print(f"Axis1: {ax1}\n")
 
             # ax1 = fig.add_subplot(2,2,1)
             # ax2 = fig.add_subplot(2,2,2)
@@ -525,25 +485,37 @@ class ConnGUI:
             # xs = []
             # ys = []
 
-            def init():
-                ax1.tick_params(
-                    axis='x', which='both', length=0,
-                    labelbottom=False, labeltop=False,
-                    labelleft=False, labelright=False
-                )
-                ax2.tick_params(
-                    axis='x', which='both', length=0,
-                    labelbottom=False, labeltop=False,
-                    labelleft=False, labelright=False
-                )
-                ax3.tick_params(
-                    axis='x', which='both', length=0,
-                    labelbottom=False, labeltop=False,
-                    labelleft=False, labelright=False
-                )
+            # def init():
+            # ax1.tick_params(
+            #     axis="x",
+            #     which="both",
+            #     length=0,
+            #     labelbottom=False,
+            #     labeltop=False,
+            #     labelleft=False,
+            #     labelright=False,
+            # )
+            # ax2.tick_params(
+            #     axis="x",
+            #     which="both",
+            #     length=0,
+            #     labelbottom=False,
+            #     labeltop=False,
+            #     labelleft=False,
+            #     labelright=False,
+            # )
+            # ax3.tick_params(
+            #     axis="x",
+            #     which="both",
+            #     length=0,
+            #     labelbottom=False,
+            #     labeltop=False,
+            #     labelleft=False,
+            #     labelright=False,
+            # )
 
             # This function is called periodically from FuncAnimation
-            def animate(i, xs1, ys1,xs2,ys2,xs3,ys3):
+            def animate(i, xs1, ys1, xs2, ys2, xs3, ys3):
                 # Read last 500 messages
                 # This could be faster
                 history = self.serial.Can_API.get_message_log(msg_id, last=500)
@@ -557,11 +529,11 @@ class ConnGUI:
 
                 for m in history:
                     # xs1.append(self.data.XData)
-                    xs1.append(m.timestamp)
+                    # xs1.append(m.timestamp)
+                    xs1.append(self.data.XDisplay)
                     ys1.append(m.data[0])
                     ys2.append(m.data[1])
                     ys3.append(m.data[2])
-
 
                 ax1.clear()
                 ax2.clear()
@@ -571,24 +543,93 @@ class ConnGUI:
                 ax2.plot(xs1, ys2)
                 ax3.plot(xs1, ys3)
 
-
                 # Format plot
-                ax1.set_title(f"Message { hex(msg_id) } ({ self.serial.Can_API.get_messages(msg_id).count })")
+                ax1.set_title(
+                    f"Message { hex(msg_id) } ({ self.serial.Can_API.get_messages(msg_id).count })"
+                )
                 ax1.set_xlabel(f"{ xs1[-1] }")
                 ax1.set_ylabel("data")
 
-                ax2.set_title(f"Message { hex(msg_id) } ({ self.serial.Can_API.get_messages(msg_id).count })")
+                ax2.set_title(
+                    f"Message { hex(msg_id) } ({ self.serial.Can_API.get_messages(msg_id).count })"
+                )
                 ax2.set_xlabel(f"{ xs1[-1] }")
                 ax2.set_ylabel("data")
 
-                ax3.set_title(f"Message { hex(msg_id) } ({ self.serial.Can_API.get_messages(msg_id).count })")
+                ax3.set_title(
+                    f"Message { hex(msg_id) } ({ self.serial.Can_API.get_messages(msg_id).count })"
+                )
                 ax3.set_xlabel(f"{ xs1[-1] }")
                 ax3.set_ylabel("data")
 
             # Set up plot to call animate() function periodically
-            ani = animation.FuncAnimation(fig, animate, fargs=(xs1, ys1,xs2,ys2,xs3,ys3), interval=10, init_func=init)
+            ani = animation.FuncAnimation(
+                fig,
+                animate,
+                fargs=(xs1, ys1, xs2, ys2, xs3, ys3),
+                interval=10,
+                # init_func=init,
+            )
+
             plt.show()
         pass
+
+    def UpdateChartAnimation(self):
+
+        def animate():
+            for MyChannelOpt in range(len(self.chartMaster.ViewVar)):
+                self.chartMaster.figs[MyChannelOpt][1].clear()
+                for cnt, state in enumerate(self.chartMaster.ViewVar[MyChannelOpt]):
+                    if state.get():
+                        MyChannel = self.chartMaster.OptionVar[MyChannelOpt][cnt].get()
+                        # mydisplayChannels.append(MyChannel)
+                        ChannelIndex = self.data.ChannelNum[MyChannel]
+
+                        self.chart = self.chartMaster.figs[MyChannelOpt][1]
+                        self.color = self.data.ChannelColor[MyChannel]
+                        self.y = self.data.YDisplay[ChannelIndex]
+                        self.x = self.data.XDisplay
+
+        try:
+            # mydisplayChannels = []
+            if customtkinter.get_appearance_mode() == "Dark":
+                plt.style.use("dark_background")
+            else:
+                plt.style.use("default")
+
+            for MyChannelOpt in range(len(self.chartMaster.ViewVar)):
+                self.chartMaster.figs[MyChannelOpt][1].clear()
+                for cnt, state in enumerate(self.chartMaster.ViewVar[MyChannelOpt]):
+                    if state.get():
+                        MyChannel = self.chartMaster.OptionVar[MyChannelOpt][cnt].get()
+                        # mydisplayChannels.append(MyChannel)
+                        ChannelIndex = self.data.ChannelNum[MyChannel]
+
+                        FuncName = self.chartMaster.FunVar[MyChannelOpt][cnt].get()
+
+                        self.chart = self.chartMaster.figs[MyChannelOpt][1]
+                        self.color = self.data.ChannelColor[MyChannel]
+                        self.y = self.data.YDisplay[ChannelIndex]
+                        self.x = self.data.XDisplay
+                        self.data.FunctionMaster[FuncName](self)
+
+                if customtkinter.get_appearance_mode() == "Dark":
+                    plt.style.use("dark_background")
+                    self.chartMaster.figs[MyChannelOpt][1].grid(
+                        color="w", linestyle="-", linewidth=0.2
+                    )
+                else:
+                    plt.style.use("default")
+                    self.chartMaster.figs[MyChannelOpt][1].grid(
+                        color="b", linestyle="-", linewidth=0.2
+                    )
+
+                self.chartMaster.figs[MyChannelOpt][0].canvas.draw()
+            # print(mydisplayChannels)
+        except Exception as e:
+            print(e)
+        if self.serial.Can_Core.online:
+            self.root.after(20, self.UpdateChart)
 
 
 class DisGUI:
@@ -599,10 +640,11 @@ class DisGUI:
 
         self.frames = []
         self.framesCol = 0
-        self.framesRow = 4
+        self.framesRow = 20
         self.totalframes = 0
 
         self.figs = []
+        self.toolbars = []
 
         self.ControlFrames = []
 
@@ -635,10 +677,18 @@ class DisGUI:
         else:
             self.framesCol = 9
 
-        self.framesRow = 4 + 4 * int(self.totalframes / 2)
+        self.framesRow = 100 + 100 * int(self.totalframes / 2)
         self.frames[self.totalframes].grid(
             padx=5, column=self.framesCol, row=self.framesRow, columnspan=9, sticky=NW
         )
+
+        if self.totalframes + 1 == 0:
+            frame_height = 120
+        else:
+            frame_height = 120 + 330 * (int(self.totalframes / 2) + 1)
+
+        self.frames[self.totalframes].width = 170
+        self.frames[self.totalframes].height = frame_height
 
     def AdjustRootFrame(self):
         self.totalframes = len(self.frames) - 1
@@ -659,6 +709,7 @@ class DisGUI:
             plt.style.use("default")
 
         self.figs.append([])
+        self.toolbars.append([])
         self.figs[self.totalframes].append(plt.Figure(figsize=(7, 3), dpi=80))
 
         self.figs[self.totalframes].append(
@@ -671,9 +722,20 @@ class DisGUI:
             )
         )
 
+        # self.toolbars[self.totalframes].append(
+        #     NavigationToolbar2Tk(
+        #         self.figs[self.totalframes][2], self.frames[self.totalframes]
+        #     )
+        # )
+        # self.toolbars[self.totalframes][0].update()
+
         self.figs[self.totalframes][2].get_tk_widget().grid(
             column=1, row=0, rowspan=17, columnspan=4, sticky=N
         )
+
+        # self.figs[self.totalframes][2]._tkcanvas.grid(
+        #     column=1, row=0, rowspan=17, columnspan=4, sticky=N
+        # )
 
     def AddBtnFrame(self):
         btnH = 1

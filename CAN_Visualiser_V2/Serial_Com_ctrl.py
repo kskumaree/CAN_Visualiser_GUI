@@ -24,7 +24,7 @@ class SerialCtrl:
         self._Can_API = API(self._Can_Core)
         self._status = False
 
-        self._channel_list =[]
+        self._channel_list = []
 
     @property
     def status(self):
@@ -41,8 +41,6 @@ class SerialCtrl:
     @channel_list.setter
     def channel_list(self, value):
         self._channel_list = value
-
-        
 
     ############## CLI ##########
     @property
@@ -104,11 +102,13 @@ class SerialCtrl:
             for signal in msg_def.signals:
                 local_list.append(signal.name)
                 # print(signal.raw_initial)
-            # print(msg.data)
-            # print(msg_def.decode_simple(msg.data))
+                # print(msg.data)
+                # print(msg_def.decode_simple(msg.data))
                 history = self.Can_API.get_message_log(int(msg_id), last=1)
                 for m in history:
-                    sig_data = self.Can_API.db.definitions.decode_message(msg_id,m.data)
+                    sig_data = self.Can_API.db.definitions.decode_message(
+                        msg_id, m.data
+                    )
                     print(sig_data[signal.name])
 
         print(local_list)
@@ -140,11 +140,13 @@ class SerialCtrl:
             gui.data.SynchChannel = int(num_channels)
             gui.data.GenChannels(channel_list)
             gui.data.buildYdata()
+            gui.data.buildXdata_with_Timestamp()
             print(gui.data.Channels, gui.data.YData)
-
-        
+            print(gui.data.XData_with_Timestamp)
 
     def SerialDataStream(self, gui):
+
+        # gui.data.ClearDisplay()
         self.threading = True
         # self.Can_Core.db.import_definitions("can.dbc")
         if self.Can_Core.db.definitions:
@@ -154,38 +156,44 @@ class SerialCtrl:
         num_msgid = len(msg_list)
         print(num_msgid)
 
-        
-
         gui.UpdateChart()
 
         while self.threading:
-            gui.data.SetRefTime()
-            gui.data.UpdataXdata()
+            # gui.data.SetRefTime()
+            # gui.data.UpdataXdata()
 
             # i = 0
-            # for ChNumber in channel_list:
-            #     # print(ChNumber)
-            #     history = self.Can_API.get_message_log(int(ChNumber), last=1)
-            #     # print(history)
+            # for msg_id in msg_list:
+            #     msg_def = self.Can_API.db.definitions.get_message_by_frame_id(msg_id)
+            #     history = self.Can_API.get_message_log(int(msg_id), last=1)
             #     for m in history:
-            #         gui.data.UpdataYdata(i,int.from_bytes(m.data,'little'))
-            #         # gui.data.UpdataYdata(i, m.data[0])
-            #         # print(len(m.data))
-            #     i = i + 1
-
+            #         gui.data.UpdataXdata_with_Timestamp(m.timestamp)
+            #         for signal in msg_def.signals:
+            #             sig_data = self.Can_API.db.definitions.decode_message(
+            #                 msg_id, m.data
+            #             )
+            #             y_data = sig_data[signal.name]
+            #             gui.data.UpdataYdata(i, y_data)
+            #             i = i + 1
 
             i = 0
             for msg_id in msg_list:
                 msg_def = self.Can_API.db.definitions.get_message_by_frame_id(msg_id)
-                history = self.Can_API.get_message_log(int(msg_id), last=1)
-                for m in history:
+                # print(f"MESSAGES of {msg_id}")
+                # print(self.Can_API.get_messages(msg_id).last)
+                m = self.Can_API.get_messages(msg_id).last
+                if m:
+                    gui.data.UpdataXdata_with_Timestamp(m.timestamp)
                     for signal in msg_def.signals:
-                        sig_data = self.Can_API.db.definitions.decode_message(msg_id,m.data)
+                        sig_data = self.Can_API.db.definitions.decode_message(
+                            msg_id, m.data
+                        )
                         y_data = sig_data[signal.name]
-                        gui.data.UpdataYdata(i,y_data)
-                        i = i+1
+                        gui.data.UpdataYdata(i, y_data)
+                        i = i + 1
 
             # Ysam = [Ys[len(gui.data.XData) - 1] for Ys in gui.data.YData]
             gui.data.AdjustData()
+            # gui.data.AdjustData_with_Timestamp()
             # print(
             #     f"X Len: {len(gui.data.XData)}, Xstart:{gui.data.XData[0]}  Xend : {gui.data.XData[len(gui.data.XData)-1]}, Xrange: {gui.data.XData[len(gui.data.XData)-1] - gui.data.XData[0]} Ydata len: {len(gui.data.YData[0])} Yval: : {Ysam} ")
