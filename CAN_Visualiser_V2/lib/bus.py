@@ -4,7 +4,8 @@ import time
 
 from datetime import datetime
 
-class Bus():
+
+class Bus:
     def __init__(self, interface, br):
         if interface:
             print("interface is")
@@ -55,36 +56,37 @@ class Bus():
     @property
     def online(self):
         return self._online
-    
+
     @online.setter
     def online(self, value):
         self._online = value
 
-
     async def listen(self, callback):
         reader = can.AsyncBufferedReader()
-        # logger = can.Logger(f"log/{ datetime.now().strftime( "%Y_%m_%d-%I_%M_%S_%p" ) }.log")
-        logger = can.Logger(f"log/{ datetime.now().isoformat(timespec='seconds') }.log")
+
+        try:
+            logger = can.Logger(
+                f"log/{ datetime.now().isoformat(timespec='seconds') }.log"
+            )
+        except:
+            logger = can.Logger(
+                "log/{}.log".format(datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p"))
+            )
 
         # Set up listeners and add callback functions
         listeners = [
-            reader,         # AsyncBufferedReader() listener
-            logger,         # Regular Listener object
+            reader,  # AsyncBufferedReader() listener
+            logger,  # Regular Listener object
         ]
         listeners.extend(callback)
 
         loop = asyncio.get_event_loop()
 
         # Create Notifier with an explicit loop to use for scheduling of callbacks
-        self.notifier = can.Notifier(
-            self.can_bus,
-            listeners,
-            timeout=1.0,
-            loop=loop
-        )
+        self.notifier = can.Notifier(self.can_bus, listeners, timeout=1.0, loop=loop)
 
         while True:
-        # Wait for next message from AsyncBufferedReader
+            # Wait for next message from AsyncBufferedReader
             msg = await reader.get_message()
             self.history.append(msg)
 
@@ -93,7 +95,7 @@ class Bus():
         asyncio.run(self.listen(callback))
 
     def stop(self):
-        print('Exiting...')
+        print("Exiting...")
         self.notifier.stop()
         self.can_bus.shutdown()
         self.online = False
